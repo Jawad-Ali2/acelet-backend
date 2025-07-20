@@ -1,0 +1,53 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model UserPreferences {
+  id        String   @id @default(uuid())
+  name      String
+  level     String
+  stream    String
+  subjects  UserSubject[]
+}
+
+model Subject {
+  id        String   @id @default(uuid())
+  name      String
+  level     String
+  stream    String
+  papers    Paper[]
+  users     UserSubject[]
+}
+
+model UserSubject {
+  id              String           @id @default(uuid())
+  userId          String
+  subjectId       String
+  user            UserPreferences @relation(fields: [userId], references: [id])
+  subject         Subject         @relation(fields: [subjectId], references: [id])
+
+  @@unique([userId, subjectId])
+}
+
+model Paper {
+  id          String   @id @default(uuid())
+  subjectId   String
+  year        Int
+  season      String
+  paperType   String
+  fileURL     String
+  fileSize    Int
+  subject     Subject  @relation(fields: [subjectId], references: [id])
+}
