@@ -15,39 +15,42 @@ datasource db {
 }
 
 model UserPreferences {
-  id        String   @id @default(uuid())
-  name      String
-  level     String
-  stream    String
-  subjects  UserSubject[]
+  id       String        @id @default(uuid())
+  name     String
+  level    String
+  stream   String
+  subjects UserSubject[]
 }
 
 model Subject {
-  id        String   @id @default(uuid())
-  name      String
-  level     String
-  stream    String
-  papers    Paper[]
-  users     UserSubject[]
+  id     String        @id @default(uuid())
+  name   String
+  level  String
+  stream String
+  papers Paper[]
+  users  UserSubject[]
+
+  @@unique([name, level, stream])
 }
 
 model UserSubject {
-  id              String           @id @default(uuid())
-  userId          String
-  subjectId       String
-  user            UserPreferences @relation(fields: [userId], references: [id])
-  subject         Subject         @relation(fields: [subjectId], references: [id])
+  id        String          @id @default(uuid())
+  userId    String
+  subjectId String
+  user      UserPreferences @relation(fields: [userId], references: [id])
+  subject   Subject         @relation(fields: [subjectId], references: [id])
 
   @@unique([userId, subjectId])
 }
 
 model Paper {
-  id          String   @id @default(uuid())
-  subjectId   String
-  year        Int
-  season      String
-  paperType   String
-  fileURL     String
-  fileSize    Int
-  subject     Subject  @relation(fields: [subjectId], references: [id])
+  id           String  @id @default(uuid())
+  subjectId    String
+  year         Int
+  season       String
+  paperType    String
+  fileURL      String
+  fileSize     Int
+  thumbnailUrl String?
+  subject      Subject @relation(fields: [subjectId], references: [id])
 }
